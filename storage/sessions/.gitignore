@@ -1,0 +1,4 @@
+# Prevent session files from being committed to Git
+*
+!.gitignore
+!.gitkeep

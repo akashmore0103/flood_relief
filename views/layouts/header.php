@@ -4,11 +4,22 @@
  * Flood Risk Prediction & Relief Camp Locator
  */
 
+if (ob_get_level() === 0) {
+    ob_start();
+}
+
 require_once dirname(__DIR__, 2) . '/config/app.php';
 require_once dirname(__DIR__, 2) . '/core/Auth.php';
 require_once dirname(__DIR__, 2) . '/core/Helper.php';
 require_once dirname(__DIR__, 2) . '/core/CSRF.php';
 require_once dirname(__DIR__, 2) . '/core/I18n.php';
+
+// Safe session startup before any HTML output begins
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @ini_set('session.cookie_httponly', '1');
+    @ini_set('session.use_only_cookies', '1');
+    @session_start();
+}
 
 $pageTitle = $pageTitle ?? APP_NAME;
 ?>

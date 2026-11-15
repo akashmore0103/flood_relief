@@ -18,8 +18,8 @@ $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 $db = Database::getInstance();
 
 if ($method === 'DELETE' || ($method === 'POST' && in_array(strtolower(trim($_GET['action'] ?? ($_POST['action'] ?? (json_decode(file_get_contents('php://input'), true)['action'] ?? '')))), ['delete', 'revoke', 'deactivate']))) {
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+        @session_start();
     }
     Auth::requireRole(['Administrator']);
 
@@ -110,8 +110,8 @@ if ($method === 'GET') {
     }
 } elseif ($method === 'POST') {
     // Session authorization check (Allow Admin or fallback if active session)
-    if (session_status() === PHP_SESSION_NONE) {
-        session_start();
+    if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+        @session_start();
     }
 
     $adminId = Auth::id() ?? 1; // Default to administrator account if logged in

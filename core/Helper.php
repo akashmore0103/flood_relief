@@ -104,25 +104,34 @@ class Helper {
     }
 
     /**
+     * Start session safely if not already active and headers not sent
+     */
+    public static function startSession(): void {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @ini_set('session.cookie_httponly', '1');
+            @ini_set('session.use_only_cookies', '1');
+            @session_start();
+        }
+    }
+
+    /**
      * Set a session flash message
      */
     public static function setFlash(string $type, string $message): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        self::startSession();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            $_SESSION['flash_messages'][] = [
+                'type' => $type, // success, danger, warning, info
+                'message' => $message
+            ];
         }
-        $_SESSION['flash_messages'][] = [
-            'type' => $type, // success, danger, warning, info
-            'message' => $message
-        ];
     }
 
     /**
      * Retrieve and clear flash messages
      */
     public static function getFlash(): array {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::startSession();
         $messages = $_SESSION['flash_messages'] ?? [];
         unset($_SESSION['flash_messages']);
         return $messages;
@@ -132,9 +141,7 @@ class Helper {
      * Check if flash messages exist
      */
     public static function hasFlash(): bool {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
-        }
+        self::startSession();
         return !empty($_SESSION['flash_messages']);
     }
 

@@ -17,7 +17,7 @@ $isAuth = Auth::check();
 $userId = $isAuth ? Auth::id() : null;
 $db = Database::getInstance();
 
-if (session_status() === PHP_SESSION_NONE) {
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
     @session_start();
 }
 

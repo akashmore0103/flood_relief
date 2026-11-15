@@ -12,11 +12,9 @@ class Auth {
      * Start secure session if not already active
      */
     public static function startSession(): void {
-        if (session_status() === PHP_SESSION_NONE) {
-            if (!headers_sent()) {
-                @ini_set('session.cookie_httponly', 1);
-                @ini_set('session.use_only_cookies', 1);
-            }
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @ini_set('session.cookie_httponly', '1');
+            @ini_set('session.use_only_cookies', '1');
             @session_start();
         }
     }

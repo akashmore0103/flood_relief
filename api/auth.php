@@ -147,7 +147,7 @@ switch ($action) {
             Response::success(null, 'Successfully logged out.');
         } else {
             // Standard browser navigation: Start clean session for flash message and redirect
-            if (session_status() === PHP_SESSION_NONE) {
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
                 @session_start();
             }
             Helper::setFlash('info', 'You have been successfully logged out.');

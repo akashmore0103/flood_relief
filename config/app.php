@@ -4,6 +4,11 @@
  * Flood Risk Prediction & Relief Camp Locator
  */
 
+// Enable global output buffering to prevent headers from prematurely flushing
+if (ob_get_level() === 0) {
+    ob_start();
+}
+
 if (!defined('APP_ROOT')) {
     define('APP_ROOT', dirname(__DIR__));
 }
@@ -38,9 +43,27 @@ define('BASE_URL', $baseUrl);
 date_default_timezone_set('Asia/Kolkata');
 define('SYSTEM_TIMEZONE', 'Asia/Kolkata');
 
-// Session Settings
+// Session Settings & Early Initialization
 define('SESSION_LIFETIME', 86400); // 24 hours
 define('CSRF_TOKEN_KEY', 'flood_relief_csrf_token');
+
+// Ensure session save path is writable across diverse hosting/local environments
+if (session_status() === PHP_SESSION_NONE) {
+    $currentSavePath = session_save_path();
+    if (empty($currentSavePath) || !@is_dir($currentSavePath) || !@is_writable($currentSavePath)) {
+        $localSessions = APP_ROOT . '/storage/sessions';
+        if (!is_dir($localSessions)) {
+            @mkdir($localSessions, 0777, true);
+        }
+        @session_save_path($localSessions);
+    }
+}
+
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    @ini_set('session.cookie_httponly', '1');
+    @ini_set('session.use_only_cookies', '1');
+    @session_start();
+}
 
 // Emergency Hotline Numbers (Configurable for citizen guidance)
 define('EMERGENCY_HELPLINE_NATIONAL', '112');

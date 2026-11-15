@@ -9,8 +9,8 @@ class CSRF {
      * Start session if needed and return CSRF token
      */
     public static function getToken(): string {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
         }
 
         if (empty($_SESSION['csrf_token'])) {
@@ -32,8 +32,8 @@ class CSRF {
      * Validate an incoming token against the stored session token
      */
     public static function validate(?string $token): bool {
-        if (session_status() === PHP_SESSION_NONE) {
-            session_start();
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+            @session_start();
         }
 
         if (empty($_SESSION['csrf_token']) || empty($token)) {

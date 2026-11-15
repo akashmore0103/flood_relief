@@ -151,7 +151,7 @@ class I18n {
      * Get current active language code
      */
     public static function getLang(): string {
-        if (session_status() === PHP_SESSION_NONE) {
+        if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
             @session_start();
         }
         if (!empty($_GET['lang']) && in_array($_GET['lang'], ['en', 'mr', 'hi'], true)) {

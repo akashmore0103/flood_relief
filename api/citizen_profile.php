@@ -19,8 +19,8 @@ $db = Database::getInstance();
 switch ($method) {
     case 'GET':
         try {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                @session_start();
             }
             if ($userId && $db->isConnected()) {
                 $sql = "SELECT cp.*, 
@@ -79,8 +79,8 @@ switch ($method) {
         $input = json_decode(file_get_contents('php://input'), true) ?? $_POST;
 
         try {
-            if (session_status() === PHP_SESSION_NONE) {
-                session_start();
+            if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+                @session_start();
             }
 
             $damId = !empty($input['monitored_dam_id']) ? (int)$input['monitored_dam_id'] : 1;
